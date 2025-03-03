@@ -13,6 +13,7 @@ const {
 	getFollowings,
 	pushInviteNotifications,
 	pushTestNoti,
+	uploadImage, uploadMiddleware
 } = require('../controllers/userController');
 
 const userRouter = Router();
@@ -28,5 +29,6 @@ userRouter.put('/update-interests', updateInterests);
 userRouter.put('/update-following', toggleFollowing);
 userRouter.post('/send-invite', pushInviteNotifications);
 userRouter.post('/push-notification', pushTestNoti);
+userRouter.post('/upload-photo', uploadMiddleware, uploadImage);
 
 module.exports = userRouter;

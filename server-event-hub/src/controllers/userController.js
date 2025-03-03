@@ -4,6 +4,8 @@ const asyncHandle = require('express-async-handler');
 const UserModel = require('../models/userModel');
 const EventModel = require('../models/eventModel');
 const { JWT } = require('google-auth-library');
+const cloudinary = require('../configs/cloudinaryConfig');
+const multer = require('multer');
 
 const nodemailer = require('nodemailer');
 require('dotenv').config();
@@ -216,7 +218,36 @@ const updateProfile = asyncHandle(async (req, res) => {
 		throw new Error('Missing data');
 	}
 });
+const uploadImage = async (req, res) => {
+	try {
+		const file = req.file; // Ảnh từ multer
+		if (!file) {
+			return res.status(400).json({ message: 'Vui lòng chọn ảnh!' });
+		}
 
+		const result = await cloudinary.uploader.upload(file.path, {
+			folder: 'profile_pictures',
+		});
+
+		// Cập nhật ảnh mới vào user
+		const user = await UserModel.findByIdAndUpdate(
+			req.body.userId,
+			{ photoUrl: result.secure_url },
+			{ new: true }
+		);
+
+		res.status(200).json({
+			message: 'Cập nhật ảnh thành công!',
+			data: user,
+		});
+	} catch (error) {
+		console.error('Lỗi upload ảnh:', error);
+		res.status(500).json({ message: 'Lỗi upload ảnh' });
+	}
+};
+
+const storage = multer.diskStorage({});
+const upload = multer({ storage });
 const updateInterests = asyncHandle(async (req, res) => {
 	const body = req.body;
 	const { uid } = req.query;
@@ -340,4 +371,6 @@ module.exports = {
 	getFollowings,
 	pushInviteNotifications,
 	pushTestNoti,
+	uploadImage,
+	uploadMiddleware: upload.single('image'),
 };
