@@ -11,6 +11,7 @@ import {
   Dimensions,
   StyleSheet,
 } from 'react-native';
+import { HambergerMenu } from 'iconsax-react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useSelector } from 'react-redux';
 import { authSelector } from '../../redux/reducers/authReducer';
@@ -32,7 +33,6 @@ const HomeScreen = ({ navigation }) => {
   ];
 
   useEffect(() => {
-    // Fake API call to get top 10 best-selling products
     setTimeout(() => {
       setProducts(
         Array.from({ length: 10 }, (_, i) => ({ id: i, name: `Sản phẩm ${i + 1}` }))
@@ -40,7 +40,6 @@ const HomeScreen = ({ navigation }) => {
     }, 1000);
   }, []);
 
-  // Render từng item trong slide show
   const renderItem = ({ item }) => (
     <View style={styles.slide}>
       <Image source={{ uri: item.url }} style={styles.image} />
@@ -48,13 +47,12 @@ const HomeScreen = ({ navigation }) => {
   );
 
   return (
-    <View style={{ marginTop: 75}}>
+    <View style={{ marginTop: 75 }}>
       <StatusBar barStyle="dark-content" />
-
-      {/* Thanh tìm kiếm + Avatar User */}
+      
       <View style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <MaterialIcons name="arrow-back" size={24} color={appColors.black} />
+        <TouchableOpacity onPress={() => navigation.openDrawer()}>
+          <HambergerMenu size={24} color={appColors.black} />
         </TouchableOpacity>
         <TextInput
           placeholder="Search"
@@ -77,7 +75,6 @@ const HomeScreen = ({ navigation }) => {
       </View>
 
       <ScrollView>
-        {/* Slide Show */}
         <View style={styles.carouselContainer}>
           <Carousel
             ref={carouselRef}
@@ -90,39 +87,7 @@ const HomeScreen = ({ navigation }) => {
             autoplayInterval={3000}
           />
         </View>
-
-        {/* Danh sách category */}
-        <View style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: appColors.gray }}>
-          <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Danh sách category</Text>
-        </View>
-
-        {/* 10 sản phẩm bán chạy */}
-        <View style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: appColors.gray }}>
-          <Text style={{ fontSize: 18, fontWeight: 'bold' }}>10 sản phẩm bán chạy</Text>
-          <FlatList
-            horizontal
-            data={products}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-              <View style={{ padding: 10, backgroundColor: appColors.lightGray, margin: 5, borderRadius: 5 }}>
-                <Text>{item.name}</Text>
-              </View>
-            )}
-          />
-        </View>
-
-        {/* Lazy loading sản phẩm */}
-        <View style={{ padding: 10, backgroundColor: appColors.green, alignItems: 'center' }}>
-          <Text style={{ fontSize: 18, fontWeight: 'bold', color: 'white' }}>
-            Sử dụng lazy loading để hiển thị tất cả sản phẩm
-          </Text>
-        </View>
       </ScrollView>
-
-      {/* Thanh Navigation */}
-      <View style={{ height: 50, backgroundColor: appColors.primary, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ color: 'white', fontSize: 18 }}>Navigation</Text>
-      </View>
     </View>
   );
 };
